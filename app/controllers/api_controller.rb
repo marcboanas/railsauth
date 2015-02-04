@@ -4,11 +4,11 @@ class ApiController < ApplicationController
   
   def signup
     if request.post?
-      if params && params[:full_name] && params[:email] && params[:password]
+      if params[:email] && params[:password]
         
         params[:user] = Hash.new    
-        params[:user][:first_name] = params[:full_name].split(" ").first
-        params[:user][:last_name] = params[:full_name].split(" ").last
+#         params[:user][:first_name] = params[:full_name].split(" ").first
+#         params[:user][:last_name] = params[:full_name].split(" ").last
         params[:user][:email] = params[:email]
         
         begin 

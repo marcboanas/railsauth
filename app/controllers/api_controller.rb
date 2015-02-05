@@ -2,7 +2,7 @@ class ApiController < ApplicationController
   http_basic_authenticate_with name:ENV["API_AUTH_NAME"], password:ENV["API_AUTH_PASSWORD"], :only => [:signup, :signin, :get_token]  
   before_filter :check_for_valid_authtoken, :except => [:signup, :signin, :get_token]
   
-  def facebook_signup
+  def facebook
     if request.post?
       if params[:provider] && params[:password] && params[:email] && params[:first_name] && params[:last_name]
         params[:user] = Hash.new

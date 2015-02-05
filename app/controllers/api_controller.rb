@@ -25,6 +25,7 @@ class ApiController < ApplicationController
           user.last_name = params[:user][:last_name]
           user.email = params[:user][:email]
           user.provider = params[:user][:provider]
+          user.password = rand_string(20)
         end
         
         if user.save

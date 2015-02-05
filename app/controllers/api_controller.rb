@@ -4,7 +4,7 @@ class ApiController < ApplicationController
   
   def facebook_signup
     if request.post?
-      if params[:provider] && params[:uid] && params[:email] && params[:first_name] && params[:last_name]
+      if params[:provider] && params[:password] && params[:email] && params[:first_name] && params[:last_name]
         params[:user] = Hash.new
         params[:user][:provider] = params[:provider]
         params[:user][:first_name] = parmas[:first_name]
@@ -12,7 +12,7 @@ class ApiController < ApplicationController
         params[:user][:email] = params[:email]
         
         begin
-          decrypted_uid = AESCrypt.decrypt(params[:uid], ENV["API_AUTH_PASSWORD"])
+          decrypted_uid = AESCrypt.decrypt(params[:password], ENV["API_AUTH_PASSWORD"])
         rescue Exception => e
           decrypted_uid = nil
         end

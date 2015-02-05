@@ -30,9 +30,9 @@ class ApiController < ApplicationController
 #           user.authtoken_expiry = Time.now + (24*60*60)
 #         end
         
-        user = User.find_or_initialize_by_uid(params[:user][:uid]).update_attributes
-        ({ :first_name => params[:user][:first_name], 
-           :last_name => params[:user][:last_name],
+        user = User.find_or_initialize_by(uid: params[:user][:uid]).update_attributes({ 
+          :first_name => params[:user][:first_name], 
+          :last_name => params[:user][:last_name],
           :email => params[:user][:email],
           :provider => params[:user][:provider],
           :password => rand_string(20),

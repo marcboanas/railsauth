@@ -17,7 +17,7 @@ class ApiController < ApplicationController
           decrypted_uid = nil
         end
         
-        params[:user][:uid] = decrypt_uid
+        params[:user][:uid] = decrypted_uid
         params[:user][:verification_code] = rand_ctring(20)
         
         user = User.find_or_create_by(uid: params[:user][:uid]) do |user|

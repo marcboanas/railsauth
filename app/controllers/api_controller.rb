@@ -20,15 +20,25 @@ class ApiController < ApplicationController
         params[:user][:uid] = decrypted_uid
         params[:user][:verification_code] = rand_string(20)
         
-        user = User.find_or_create_by(uid: params[:user][:uid]) do |user|
-          user.first_name = params[:user][:first_name]
-          user.last_name = params[:user][:last_name]
-          user.email = params[:user][:email]
-          user.provider = params[:user][:provider]
-          user.password = rand_string(20)
-          user.api_authtoken = rand_string(20)
-          user.authtoken_expiry = Time.now + (24*60*60)
-        end
+#         user = User.find_or_create_by(uid: params[:user][:uid]) do |user|
+#           user.first_name = params[:user][:first_name]
+#           user.last_name = params[:user][:last_name]
+#           user.email = params[:user][:email]
+#           user.provider = params[:user][:provider]
+#           user.password = rand_string(20)
+#           user.api_authtoken = rand_string(20)
+#           user.authtoken_expiry = Time.now + (24*60*60)
+#         end
+        
+        user = User.find_or_initialize_by_uid(params[:user][:uid]).update_attributes
+        ({ :first_name => params[:user][:first_name], 
+           :last_name => params[:user][:last_name],
+          :email => params[:user][:email],
+          :provider => params[:user][:provider],
+          :password => rand_string(20),
+          :api_authtoken => rand_string(20),
+          :authtoken_expiry => Time.now + (24*60*60)
+        })
         
         if user.save
           render :json => user.to_json, :status => 200

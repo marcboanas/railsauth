@@ -26,6 +26,8 @@ class ApiController < ApplicationController
           user.email = params[:user][:email]
           user.provider = params[:user][:provider]
           user.password = rand_string(20)
+          user.auth_token = rand_string(20)
+          user.auth_expiry = Time.now + (24*60*60)
         end
         
         if user.save

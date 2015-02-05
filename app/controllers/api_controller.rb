@@ -30,7 +30,7 @@ class ApiController < ApplicationController
 #           user.authtoken_expiry = Time.now + (24*60*60)
 #         end
         
-        user = User.find_or_initialize_by(uid: params[:user][:uid]).update_attributes({ 
+        if User.find_or_initialize_by(uid: params[:user][:uid]).update_attributes({ 
           :first_name => params[:user][:first_name], 
           :last_name => params[:user][:last_name],
           :email => params[:user][:email],
@@ -39,8 +39,6 @@ class ApiController < ApplicationController
           :api_authtoken => rand_string(20),
           :authtoken_expiry => Time.now + (24*60*60)
         })
-        
-        if user.save
           render :json => user.to_json, :status => 200
         else
           error_str = ""

@@ -2,6 +2,50 @@ class ApiController < ApplicationController
   http_basic_authenticate_with name:ENV["API_AUTH_NAME"], password:ENV["API_AUTH_PASSWORD"], :only => [:signup, :signin, :get_token]  
   before_filter :check_for_valid_authtoken, :except => [:signup, :signin, :get_token]
   
+  def facebook_signup
+    if request.post?
+      if params[:provider] && params[:uid]
+        params[:user] = Hash.new
+        params[:user][:provider] = params[:provider]
+        params[:user][:first_name] = parmas[:first_name]
+        params[:user][:last_name] = params[:last_name]
+        params[:user][:email] = params[:email]
+        
+        begin
+          decrypted_uid = AESCrypt.decrypt(params[:uid], ENV["API_AUTH_PASSWORD"])
+        rescue Exception => e
+          decrypted_uid = nil
+        end
+        
+        params[:user][:uid] = decrypt_uid
+        params[:user][:verification_code] = rand_ctring(20)
+        
+        user = User.find_or_create_by(uid: params[:user][:uid]) do |user|
+          user.first_name = params[:user][:first_name]
+          user.last_name = params[:user][:last_name]
+          user.email = params[:user][:email]
+          user.provider = params[:user][:provider]
+        end
+        
+        if user.save
+          render :json => user.to_json, :status => 200
+        else
+          error_str = ""
+
+          user.errors.each{|attr, msg|           
+            error_str += "#{attr} - #{msg},"
+          }
+                    
+          e = Error.new(:status => 400, :message => error_str)
+          render :json => e.to_json, :status => 400
+        end
+      else
+        e = Error.new(:status => 400, :message => "required parameters are missing")
+        render :json => e.to_json, :status => 400
+      end
+    end
+  end
+  
   def signup
     if request.post?
       if params[:email] && params[:password]
@@ -264,7 +308,7 @@ class ApiController < ApplicationController
   
   def user_params
     params.require(:user).permit(:first_name, :last_name, :email, :password, :password_hash, :password_salt, :verification_code, 
-    :email_verification, :api_authtoken, :authtoken_expiry)
+      :email_verification, :api_authtoken, :authtoken_expiry, :provider, :uid)
   end
   
   def photo_params

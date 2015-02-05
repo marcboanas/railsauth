@@ -4,7 +4,7 @@ class ApiController < ApplicationController
   
   def facebook_signup
     if request.post?
-      if params[:provider] && params[:uid]
+      if params[:provider] && params[:uid] && params[:email] && params[:first_name] && params[:last_name]
         params[:user] = Hash.new
         params[:user][:provider] = params[:provider]
         params[:user][:first_name] = parmas[:first_name]
